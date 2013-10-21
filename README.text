@@ -1,0 +1,26 @@
+/* 
+SDN-based Application for efficient video streaming- Internet2 Innovative Application award 2013
+Aditi Ghag
+Rasha El-Jaroudi 
+*/
+1) 	Install the Floodlight controller and build a jar file. 
+	Locate the floodlight/target directory and run the floodlight.jar to start the Floodlight controller.
+		java -jar ~/floodlight/target/floodlight.jar
+	In order to use proactive flow insertion disable the Forwarding module which is enabled by default. 
+	Edit floodlight/src/main/resources/floodlight.properties file and remove the line "net.floodlightcontroller.forwarding.Forwrading,\"
+	Once removed, rebuild the floodlight.jar file using ant and add static flows in the network using static flow entry pusher module. 
+		python staticflowpusher.py <Enter Floodlightcontroller IP address>
+
+2)	Install Apache HTTP server. Enable headers while configuring the 		apache server. To allow access for cross-site HTTP requests add  		lines "Header set Access-Control-Allow-Origin "*" " ; " Header add 		Access-Control-Expose-Headers: origin" ; "Access-Control-Expose-		Headers: range" in /usr/local/apache2/conf/httpd.conf file.
+	Put all the files(video and manifest) that the HTTP server is responsible to serve in response to the HTTP requests in the /usr/local/apache2/htdocs directory. 
+	Start the servers(both main and proxy).
+		/usr/local/apache2/bin/apachectl -k start
+
+3)	To set up multicast file transfer choose an approriate network 			interface on which the sender can send and the receivers can receive 	 multicast traffic. 
+		g++ udps_multicast.cc -o udps_multicast
+		g++ udpc_multicast.cc -o udpc_multicast
+	Start the multicast clients.
+		./udpc_multicast <Multicast_GROUP_address> <Multicast_network-interface_address> <Port_num> 
+	Run the multicast server.
+		./udps_multicast <Multicast_GROUP_address> <Multicast_network-interface_address> <Port_num> <File to be sent>
+
